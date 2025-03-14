@@ -184,3 +184,22 @@ fn zmain(zarg) {
 
 
 ]
+
+{ #category : #tests }
+JibInterpreterTests >> test_fakev64_01 [
+	| program main interpreter |
+	program := JibParser parse: (JibExamples / 'Jib' / 'fakev64.ir') contents.
+
+	main := program lookupFunction: 'zexecute'.
+
+	interpreter := JibInterpreter for: main arguments: {  }.
+	interpreter setRegister: 'zPC' to: (16rA000 toBitVector: 64).
+
+	interpreter interpret.
+
+	self assert: ((interpreter getRegister: 'zXs') at: 5) = 42.
+	self assert:  (interpreter getRegister: 'zPC')        = 16rA004
+
+
+
+]

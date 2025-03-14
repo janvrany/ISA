@@ -1,0 +1,97 @@
+
+
+val zplain_vector_accesszIB64zK = "vector_access" : (%vec(%bv64), %i) ->  %bv64
+
+val zplain_vector_updatezIB64zK = "vector_update" : (%vec(%bv64), %i, %bv64) ->  %vec(%bv64)
+
+
+register zPC : %bv64
+
+register znextPC : %bv64
+
+register zXs : %fvec(32, %bv64)
+
+val zrX : (%bv5) ->  %bv64
+
+fn zrX(zr) {
+  zz40 : %bv64 `0 102:2-105:3;
+  zz46 : %bv5 `0 103:4-103:11;
+  zz46 = zr `0 103:4-103:11;
+  zz47 : %bool `0 102:2-105:3;
+  zz411 : %bv `0 103:4-103:11;
+  zz411 = zz46 `0 103:4-103:11;
+  zz412 : %bv `0 103:4-103:11;
+  zz412 = 0b00000 `0 103:4-103:11;
+  zz47 = zeq_bits(zz411, zz412) `0 103:4-103:11;
+  jump @not(zz47) goto 11 `0 102:2-105:3;
+  goto 12;
+  goto 20;
+  zz48 : %i `0 103:15-103:24;
+  zz48 = zz5i64zDzKz5i(64) `0 103:15-103:24;
+  zz49 : %bv `0 103:15-103:24;
+  zz49 = 0x0 `0 103:15-103:24;
+  zz410 : %bv `0 103:15-103:24;
+  zz410 = zEXTZ(zz48, zz49) `0 103:15-103:24;
+  zz40 = zz410 `0 103:15-103:24;
+  goto 31;
+  zz41 : %i64 `0 104:9-104:24;
+  zz44 : %bv `0 104:12-104:23;
+  zz44 = zr `0 104:12-104:23;
+  zz45 : %i `0 104:12-104:23;
+  zz45 = zunsigned(zz44) `0 104:12-104:23;
+  zz41 = zz5izDzKz5i64(zz45) `0 104:12-104:23;
+  zz42 : %vec(%bv64) `0 104:9-104:24;
+  zz42 = zXs `0 104:9-104:24;
+  zz43 : %i `0 104:9-104:24;
+  zz43 = zz5i64zDzKz5i(zz41) `0 104:9-104:24;
+  zz40 = zplain_vector_accesszIB64zK(zz42, zz43) `0 104:9-104:24;
+  return = zz40 `0 102:2-105:3;
+  end;
+}
+
+val zwX : (%bv5, %bv64) ->  %unit
+
+fn zwX(zr, zv) {
+  zz40 : %bool `0 110:2-112:3;
+  zz47 : %bv `0 110:5-110:17;
+  zz47 = zr `0 110:5-110:17;
+  zz48 : %bv `0 110:5-110:17;
+  zz48 = 0b00000 `0 110:5-110:17;
+  zz40 = zneq_bits(zz47, zz48) `0 110:5-110:17;
+  jump zz40 goto 9 `0 110:2-112:3;
+  return = () `0 112:3-112:3;
+  goto 23;
+  zz41 : %i64 `0 111:5-111:20;
+  zz45 : %bv `0 111:8-111:19;
+  zz45 = zr `0 111:8-111:19;
+  zz46 : %i `0 111:8-111:19;
+  zz46 = zunsigned(zz45) `0 111:8-111:19;
+  zz41 = zz5izDzKz5i64(zz46) `0 111:8-111:19;
+  zz42 : %vec(%bv64) `0 111:5-111:20;
+  zz42 = zXs `0 111:5-111:20;
+  zz43 : %i `0 111:5-111:20;
+  zz43 = zz5i64zDzKz5i(zz41) `0 111:5-111:20;
+  zz44 : %vec(%bv64) `0 111:5-111:20;
+  zz44 = zplain_vector_updatezIB64zK(zz42, zz43, zv) `0 111:5-111:20;
+  zXs = zz44 `0 111:5-111:20;
+  return = () `1;
+  end;
+}
+
+val zexecute : () ->  %unit
+
+fn zexecute() {
+  zz1 : %fvec(32, %bv64);
+  zz1 = zXs;
+  zz1 = zplain_vector_updatezIB64zK(zz1, 5, 0x0000002A);
+  zXs = zz1;
+
+  zPC = @bvadd(zPC , 0x0000000000000004);
+
+  zz0 : %unit;
+  zz0 = ();
+  return = zz0;
+  end;
+}
+
+val zinitializze_registers : (%unit) ->  %unit

@@ -210,6 +210,12 @@ JibInterpreter >> interpretMonomorphize: insn [
 
 ]
 
+{ #category : #'interpreting - exprs' }
+JibInterpreter >> interpretUnit: expr [
+	^ '()'
+
+]
+
 { #category : #interpreting }
 JibInterpreter >> interpretUntil: condition [
 	"Interpret until condition holds"

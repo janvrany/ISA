@@ -24,6 +24,15 @@ JibParsingTest >> testParseDuopod [
 ]
 
 { #category : #'tests - program' }
+JibParsingTest >> testParseFakev64 [
+	| p |
+
+	p := self parseFileNamed: JibExamples / 'Jib' / 'fakev64.ir'.
+
+	self assert: (p isKindOf: JibProgram)
+]
+
+{ #category : #'tests - program' }
 JibParsingTest >> testParseReturn42 [
 	| p |
 

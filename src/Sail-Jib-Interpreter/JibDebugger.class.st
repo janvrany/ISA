@@ -34,6 +34,11 @@ JibDebugger >> methodCodeIn: composite forContext: context [
 		format: [ :insn | self formatInstruction: insn forContext: context ]
 ]
 
+{ #category : #opening }
+JibDebugger >> setDebuggerToFirstNonFilteredContext [
+	"Nothing to do"
+]
+
 { #category : #'building presentations' }
 JibDebugger >> stackWidgetIn: composite [
 	^ composite fastList

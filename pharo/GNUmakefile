@@ -16,6 +16,23 @@ MACHINEARITHMETIC_BRANCH ?= pure-z3
 $(eval $(call git-clone-local,MACHINEARITHMETIC_DIR,$(MACHINEARITHMETIC_URL),$(MACHINEARITHMETIC_BRANCH)))
 endif
 
+ifndef PTERM_DIR
+PTERM_DIR    := ../../3rdparty/PTerm
+PTERM_URL    ?= https://github.com/janvrany/PTerm
+PTERM_BRANCH ?= master
+$(eval $(call git-clone-local,PTERM_DIR,$(PTERM_URL),$(PTERM_BRANCH)))
+endif
+
+ifndef LIBGDBS_DIR
+LIBGDBS_DIR    := ../../3rdparty/jv/libgdbs
+LIBGDBS_URL    ?= https://jan.vrany.io/hg/jv-libgdbs
+LIBGDBS_BRANCH ?= default
+$(eval $(call mercurial-clone-local,LIBGDBS_DIR,$(LIBGDBS_URL),$(LIBGDBS_BRANCH)))
+endif
+
+prereq::
+	$(MAKE) -C $(LIBGDBS_DIR)/ports/pharo source
+
 build: prereq $(PROJECT).image
 	@echo ""
 	@echo "To open Pharo $(PROJECT) image run:"
@@ -26,6 +43,8 @@ build: prereq $(PROJECT).image
 $(PROJECT).image: ../src/*/*.st
 	$(call pharo-copy-image, $(PHARO_IMAGE), $@)
 	$(call pharo-load-local, $@, MachineArithmetic,$(MACHINEARITHMETIC_DIR)/src)
+	$(call pharo-load-local, $@, PTerm,            $(PTERM_DIR))
+	$(call pharo-load-local, $@, LibGDBs,          $(LIBGDBS_DIR)/ports/pharo/src-generated)
 	$(call pharo-load-local, $@, ISA,            ../src)
 
 run: build

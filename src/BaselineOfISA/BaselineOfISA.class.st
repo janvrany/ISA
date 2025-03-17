@@ -39,5 +39,10 @@ BaselineOfISA >> baseline: spec [
 			spec requires: 'Sail-Jib-Parsing';
 			     requires: 'Sail-Jib'.
 		].
+
+		spec package: 'Sail-Jib-Interpreter-GTB' with:[
+			spec requires: 'LibGDBs';
+			     requires: 'Sail-Jib-Interpreter'
+		].
  ]
 ]

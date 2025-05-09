@@ -566,3 +566,20 @@ fn  zmain() {
 
 
 ]
+
+{ #category : #'tests - duopod' }
+JibInterpreterTests >> test_duopod [
+	| program decode interpreter |
+
+	"addi a4, a5, 0 is #x00078713'"
+	program := JibParser parse: (JibExamples / 'Jib' / 'duopod.ir') asFileReference contents.
+
+	decode := program lookupFunction: 'zdecode'.
+
+	interpreter := JibInterpreter for: decode arguments: { 16r00078713 toBitVector: 32 }.
+
+	interpreter interpret.
+
+	self assert: interpreter retVal  = 64.
+
+]

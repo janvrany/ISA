@@ -51,3 +51,20 @@ JibProgramNaiveAnalyzer >> analyzeProgram: program [
 JibProgramNaiveAnalyzer >> analyzeRegister: register [
 	register setEnvironment: (JibEnvironment of: register)
 ]
+
+{ #category : #'analysis - defs' }
+JibProgramNaiveAnalyzer >> analyzeStruct: struct [
+	| fields ctor sort |
+	
+	fields := struct fields collect: [ :nameAndType | nameAndType key -> (nameAndType value sort)].
+	
+	ctor := Z3Constructor name: struct id 
+	                recognizer: 'is-' , struct id
+	                    fields: fields 
+	               referencing:((1 to: fields size) collect: [ :_ | 0 ]).
+	sort := Z3DatatypeSort name: struct id constructors: { ctor }.
+	
+	struct program environment
+		registerSort: sort forTypename: struct id. 
+	
+]

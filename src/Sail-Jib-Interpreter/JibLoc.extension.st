@@ -4,3 +4,8 @@ Extension { #name : #JibLoc }
 JibLoc >> assign: value in: interpreter [
 	self subclassResponsibility
 ]
+
+{ #category : #'*Sail-Jib-Interpreter' }
+JibLoc >> readIn: interpreter [
+	self subclassResponsibility
+]

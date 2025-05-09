@@ -25,6 +25,11 @@ JibEnvironment >> initializeWithNode: aJibProgramNode [
 ]
 
 { #category : #lookup }
+JibEnvironment >> lookupCtorForName: id numArgs: numArgs ifNone: noneBlock [
+	^self parent lookupCtorForName: id numArgs: numArgs ifNone: noneBlock
+]
+
+{ #category : #lookup }
 JibEnvironment >> lookupSortForTypename: id [
 	^ self parent lookupSortForTypename: id
 ]

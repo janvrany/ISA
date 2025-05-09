@@ -46,6 +46,11 @@ Instr_Call >> function [
 ]
 
 { #category : #accessing }
+Instr_Call >> id [
+	^ f
+]
+
+{ #category : #accessing }
 Instr_Call >> location [
 	^lvalue
 ]

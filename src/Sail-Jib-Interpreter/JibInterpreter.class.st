@@ -262,14 +262,8 @@ JibInterpreter >> interpretGoto: insn [
 ]
 
 { #category : #'interpreting - exprs' }
-JibInterpreter >> interpretI128: expr [
-	^ expr value toInt
-
-]
-
-{ #category : #'interpreting - exprs' }
 JibInterpreter >> interpretI64: expr [
-	^ expr value toInt
+	^ expr value
 
 ]
 

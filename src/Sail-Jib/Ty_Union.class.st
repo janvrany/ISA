@@ -14,6 +14,11 @@ Ty_Union class >> inducedParser [
 	construct: #(- id)
 ]
 
+{ #category : #accessing }
+Ty_Union >> sort [
+	^ self environment lookupSortForTypename: id
+]
+
 { #category : #printing }
 Ty_Union >> unparseOn: aStream [
 	aStream nextPutAll: '%union '.

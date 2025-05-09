@@ -68,3 +68,29 @@ JibProgramNaiveAnalyzer >> analyzeStruct: struct [
 		registerSort: sort forTypename: struct id. 
 	
 ]
+
+{ #category : #'analysis - defs' }
+JibProgramNaiveAnalyzer >> analyzeUnion: union [
+	| unionCtors unionSort |
+
+	unionCtors := union members collect:[:nameAndType|
+		| name type ctor |
+
+		name := nameAndType key.
+		type := nameAndType value.
+
+		ctor := Z3Constructor name: name
+		                recognizer: 'is-' , name
+		                    fields: { 'v' -> type sort }
+		               referencing: { 0 }.
+
+		ctor.
+	].
+
+	unionSort := Z3DatatypeSort name: union id constructors: unionCtors.
+
+
+
+	self shouldBeImplemented
+
+]

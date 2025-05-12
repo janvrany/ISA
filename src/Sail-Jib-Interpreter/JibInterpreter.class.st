@@ -264,6 +264,15 @@ JibInterpreter >> interpretExit: insn [
 
 ]
 
+{ #category : #'interpreting - exprs' }
+JibInterpreter >> interpretField: expr [
+	| val |
+	
+	val := expr expr interpretIn: self.
+	^ val get: expr id
+
+]
+
 { #category : #'interpreting - insns' }
 JibInterpreter >> interpretGoto: insn [
 	self assert:(insn target between: 1 and: context function instrs size).

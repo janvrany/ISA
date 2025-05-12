@@ -585,6 +585,41 @@ fn  zmain(za) {
 
 ]
 
+#category : #'tests - struct' }
+JibInterpreterTests >> test_struct_04 [
+	| program main point interpreter |
+	program := JibParser parse:'
+
+
+
+struct zpoint {
+	zx : %i,
+	zy : %i
+}
+
+val zmain : (%struct zpoint) -> %i
+fn  zmain(zp) {
+	zz1 : %i;
+	zz1 = zp.zx;
+  return = zz1;
+  end;
+}
+
+'.
+	program doSemanticAnalysis.
+
+	main := program lookupFunction: 'zmain'.
+
+	point := ((program environment lookupSortForTypename: 'zpoint') constructor: 0) value: 42 value: 53.
+
+	interpreter := JibInterpreter for: main arguments: { point }.
+
+	interpreter interpret.
+
+	self assert: interpreter retVal isInt.
+	self assert: interpreter retVal value = 42.
+]
+
 { #category : #'tests - unions' }
 JibInterpreterTests >> test_union_01_A [
 	| program main interpreter |

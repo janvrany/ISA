@@ -12,7 +12,7 @@ Ty_AnyBits class >> inducedParser [
 
 { #category : #accessing }
 Ty_AnyBits >> sort [
-	^ self shouldNotImplement 
+	^ Z3Sort uninterpretedSortNamed:'bv'
 ]
 
 { #category : #printing }

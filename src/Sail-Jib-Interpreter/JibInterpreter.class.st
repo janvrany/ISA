@@ -404,6 +404,20 @@ JibInterpreter >> interpretUnit: insn [
 
 ]
 
+{ #category : #'interpreting - exprs' }
+JibInterpreter >> interpretUnwrap: expr [
+	| value |
+
+	value := expr expr interpretIn: self.
+	0 to: value sort numConstructors - 1 do: [ :i |
+		(value sort constructor: i) name = expr id ifTrue:[
+			^ (value sort accessor: i idx: 0) value: value
+		]				
+	].
+	self error:'datatype / constructor mismatch'
+
+]
+
 { #category : #interpreting }
 JibInterpreter >> interpretWhileFalse: condition [
 	"Interpret instruction by instruction as long as `condition` evaluates to `false`"

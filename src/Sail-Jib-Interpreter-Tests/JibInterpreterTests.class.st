@@ -749,3 +749,36 @@ register zPC : %bv64
 	self assert:(interpreter retVal is: 'B').
 
 ]
+
+{ #category : #'tests - unions' }
+JibInterpreterTests >> test_unwrap_01_B [
+	| program main interpreter |
+	program := JibParser parse:'
+union U {
+  A : %i,
+  B : %bv32
+}
+
+val zmain : (%i) -> %bv32
+
+fn zmain(zx) {
+  zz1 : %union U      `0;
+  zz1 = B(#x0000FFFF) `1;
+  zz2 : %bv32         `2;
+  zz2 = zz1 as B      `3;
+  return = zz2        `4;
+  end;
+}
+
+register zPC : %bv64
+'.
+
+	main := program lookupFunction: 'zmain'.
+
+	interpreter := JibInterpreter for: main arguments: { 1 toInt }.
+
+	interpreter interpret.
+
+	self assert: interpreter retVal equals: (16r0000FFFF toBitVector: 32).
+
+]

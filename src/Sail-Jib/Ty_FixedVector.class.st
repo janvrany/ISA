@@ -29,6 +29,10 @@ Ty_FixedVector >> childrenDo: aBlock [
 { #category : #'instance creation' }
 Ty_FixedVector >> newUndefined [
 	^Array new: length withAll: ty newUndefined "BOGUS, fix once we have type elaboration in place"
+
+{ #category : #accessing }
+Ty_FixedVector >> sort [
+	^ Int sort --> ty sort.
 ]
 
 { #category : #printing }

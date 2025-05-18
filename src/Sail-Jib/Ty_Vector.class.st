@@ -20,13 +20,15 @@ Ty_Vector >> childrenDo: aBlock [
 	
 ]
 
+{ #category : #accessing }
+Ty_Vector >> sort [
+	^ Int sort --> ty sort.
+]
+
 { #category : #printing }
 Ty_Vector >> unparseOn: aStream [
-	super unparseOn: aStream.
-	"
-	aStream 
-		nextPutAll:'...';
-		nextPutAll:'...'.
-	"
+	aStream nextPutAll:'%vec('.
+	ty unparseOn: aStream.
+	aStream 	nextPutAll:')'.
 
 ]

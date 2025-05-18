@@ -26,9 +26,21 @@ Ty_FixedVector >> childrenDo: aBlock [
 	
 ]
 
-{ #category : #'instance creation' }
+{ #category : #'as yet unclassified' }
 Ty_FixedVector >> newUndefined [
-	^Array new: length withAll: ty newUndefined "BOGUS, fix once we have type elaboration in place"
+	^ self newZero
+]
+
+{ #category : #'as yet unclassified' }
+Ty_FixedVector >> newZero [
+	| zero |
+
+	zero := ty newZero.
+	^ (0 to: length - 1)
+			inject: (self sort mkFreshConst: 'undefined')
+			into: [ :array :index | array arrayStore: index toInt put: zero ]
+
+]
 
 { #category : #accessing }
 Ty_FixedVector >> sort [

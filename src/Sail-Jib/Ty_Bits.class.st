@@ -14,6 +14,11 @@ Ty_Bits class >> inducedParser [
 	construct: #(- length)
 ]
 
+{ #category : #'as yet unclassified' }
+Ty_Bits >> newZero [
+	^ self sort cast: 0
+]
+
 { #category : #accessing }
 Ty_Bits >> sort [
 	^ self environment context mkBvSort: length 

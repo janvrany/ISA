@@ -68,6 +68,17 @@ JibInterpreter >> getRegister: id [
 	^ globals at: id
 ]
 
+{ #category : #'accessing - globals' }
+JibInterpreter >> getRegister: index bank: id [
+	| bank | 
+	
+	self assert: (globals includesKey: id).
+	self assert:((globals at: id) isKindOf: McCarthyArray).
+	
+	bank := globals at: id.	
+	^bank arraySelect: (bank ctx mkIntSort cast: index).
+]
+
 { #category : #initialization }
 JibInterpreter >> initializeWithFunction: fn arguments: args [
 	entry := fn.
@@ -458,6 +469,18 @@ JibInterpreter >> set: id to: value [
 	] ifFalse:[
 		context set: id to: value
 	]
+]
+
+{ #category : #'accessing - globals' }
+JibInterpreter >> setRegister: index bank: id to: value [
+	| bank |
+	
+	self assert:(globals includesKey: id).
+	self assert:((globals at: id) isKindOf: McCarthyArray).
+	
+	bank := globals at: id.
+	bank := bank arrayStore: (bank ctx mkIntSort cast: index) put: value.
+	globals at: id put: bank
 ]
 
 { #category : #'accessing - globals' }

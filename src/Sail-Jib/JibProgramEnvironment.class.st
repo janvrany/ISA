@@ -26,6 +26,22 @@ JibProgramEnvironment >> initializeWithNode: aJibProgramNode [
 ]
 
 { #category : #lookup }
+JibProgramEnvironment >> lookupCtorForName: name [
+	"Lookup and return datatype constructor with given `name`
+	taking `numArgs`. If no such constructor is found, evaluate
+	`noneBlock` and return resulting value."
+
+	typename2SortMap do:[:sort |
+		sort constructors do:[:ctor|
+			(ctor name = name) ifTrue:[
+				^ ctor
+			]
+		]
+	].
+	^self error:'No ctor named ', name
+]
+
+{ #category : #lookup }
 JibProgramEnvironment >> lookupCtorForName: name numArgs: numArgs ifNone: noneBlock [
 	"Lookup and return datatype constructor with given `name` 
 	taking `numArgs`. If no such constructor is found, evaluate

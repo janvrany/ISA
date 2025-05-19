@@ -489,6 +489,72 @@ JibInterpreterTests >> test_duopod [
 	self assert:(ast is: 'zITYPE').
 ]
 
+{ #category : #'tests - unions' }
+JibInterpreterTests >> test_kind_01_A [
+	| program main interpreter |
+	program := JibParser parse:'
+union U {
+  A : %i,
+  B : %bv32
+}
+
+val zmain : (%i) -> %bool
+
+fn zmain(zx) {
+  zz1 : %union U      `0;
+  zz1 = A(42)         `1;
+  zz2 : %bool         `2;
+  zz2 = zz1 is A      `3;
+  return = zz2        `4;
+  end;
+}
+
+register zPC : %bv64
+'.
+
+	main := program lookupFunction: 'zmain'.
+
+	interpreter := JibInterpreter for: main arguments: { 1 toInt }.
+
+	interpreter interpret.
+
+	self assert: interpreter retVal = false.
+
+]
+
+{ #category : #'tests - unions' }
+JibInterpreterTests >> test_kind_01_B [
+	| program main interpreter |
+	program := JibParser parse:'
+union U {
+  A : %i,
+  B : %bv32
+}
+
+val zmain : (%i) -> %bool
+
+fn zmain(zx) {
+  zz1 : %union U      `0;
+  zz1 = A(42)         `1;
+  zz2 : %bool         `2;
+  zz2 = zz1 is B      `3;
+  return = zz2        `4;
+  end;
+}
+
+register zPC : %bv64
+'.
+
+	main := program lookupFunction: 'zmain'.
+
+	interpreter := JibInterpreter for: main arguments: { 1 toInt }.
+
+	interpreter interpret.
+
+	self assert: interpreter retVal = true.
+
+]
+
 { #category : #'tests - struct' }
 JibInterpreterTests >> test_struct_01 [
 	| program main interpreter |

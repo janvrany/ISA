@@ -14,6 +14,16 @@ Exp_Kind >> childrenDo: aBlock [
 	
 ]
 
+{ #category : #accessing }
+Exp_Kind >> expr [
+	^exp
+]
+
+{ #category : #accessing }
+Exp_Kind >> id [
+	^id
+]
+
 { #category : #printing }
 Exp_Kind >> unparseOn: aStream [
 	exp unparseOn: aStream.

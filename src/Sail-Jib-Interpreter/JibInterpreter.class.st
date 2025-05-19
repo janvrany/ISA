@@ -321,10 +321,63 @@ JibInterpreter >> interpretJump: insn [
 
 ]
 
+{ #category : #'interpreting - exprs' }
+JibInterpreter >> interpretKind: expr [
+	| val tst |
+
+	val := expr expr interpretIn: self.
+	tst := val sort recognizerFor: expr id.
+	"
+	Warning: DO NOT REMOVE #not IN CODE BELOW.
+
+	Counter-intuitively, kind expression returns
+	*false* if result of expression `exp` is an instance
+	of union member `id`, and *true* if it isn't.
+
+	Weird as it sound, it is true. Following Jib program
+	return *false* (tested with isla-execute-function):
+
+		union U {
+			A : %i,
+			B : %bv32
+		}
+
+		val zmain : (%unit) -> %bool
+
+		fn zmain(zx) {
+			zz1 : %union U      `0;
+			zz1 = A(42)         `1;
+			zz2 : %bool         `2;
+			zz2 = zz1 is A      `3;
+			return = zz2        `4;
+			end;
+		}
+
+		register zPC : %bv64
+
+	If you change A to B in instruction `3, it will return true.
+	So, keep the #not, it is not a bug!	"
+
+	^(val is: expr id) not "<- DO NOT REMOVE THAT #not !!!"
+
+]
+
 { #category : #'interpreting - insns' }
 JibInterpreter >> interpretMonomorphize: insn [
 	self notYetImplemented
 
+
+]
+
+{ #category : #'interpreting - exprs' }
+JibInterpreter >> interpretRef: expr [
+	^ self shouldBeImplemented
+
+]
+
+{ #category : #'interpreting - exprs' }
+JibInterpreter >> interpretString: expr [
+	^ self shouldBeImplemented
 
 ]
 

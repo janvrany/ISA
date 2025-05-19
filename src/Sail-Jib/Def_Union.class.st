@@ -20,6 +20,11 @@ Def_Union class >> inducedParser [
 	construct: #(- id ids)
 ]
 
+{ #category : #analysis }
+Def_Union >> analyzeUsing: analyzer [
+	analyzer analyzeUnion: self
+]
+
 { #category : #enumerating }
 Def_Union >> childrenDo: aBlock [	
 	ids do:[:arg | aBlock value: arg value].

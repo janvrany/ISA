@@ -20,6 +20,11 @@ Def_Struct class >> inducedParser [
 	construct: #(- id ids)
 ]
 
+{ #category : #analysis }
+Def_Struct >> analyzeUsing: analyzer [
+	analyzer analyzeStruct: self
+]
+
 { #category : #enumerating }
 Def_Struct >> childrenDo: aBlock [
 	ids do:[:arg | aBlock value: arg value].

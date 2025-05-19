@@ -555,6 +555,220 @@ register zPC : %bv64
 
 ]
 
+{ #category : #'tests - duopod' }
+JibInterpreterTests >> test_quattropod_addi [
+	| program decode execute interpreter ast a4 |
+
+	"addi x14, x15, 2 is #x00278713'"
+	program := JibParser parse: (JibExamples / 'Jib' / 'riscv_quattropod.ir') asFileReference contents.
+	program sourceSearchPath add: (JibExamples / 'Sail') pathName.
+
+	decode := program lookupFunction: 'zdecode'.
+	execute := program lookupFunction: 'zexecute'.
+	
+
+	interpreter := JibInterpreter for: decode arguments: { 16r00278713 toBitVector: 32 }.
+
+	interpreter interpret.
+
+	ast := interpreter retVal.
+	
+	self assert: (ast isDatatype).
+	self assert: (ast is: 'zITYPE').
+	
+	interpreter := JibInterpreter for: execute arguments: { ast }.
+	
+	
+	interpreter setRegister: 14 bank: 'zXs' to: (16rCAFE00000000AFFE toBitVector: 64).
+	interpreter setRegister: 15 bank: 'zXs' to: (                 40 toBitVector: 64).
+	
+	self assert: (interpreter getRegister: 15 bank: 'zXs') = (40 toBitVector: 64).
+	"
+	JibInstructionDebugger openOn: (JibDebuggerSession for: interpreter)
+	"
+	"
+	self halt.
+	"
+	interpreter interpret.
+	
+	self assert: (interpreter getRegister: 14 bank: 'zXs') = (42 toBitVector: 64).
+]
+
+{ #category : #'tests - duopod' }
+JibInterpreterTests >> test_quattropod_addi_sym_imm [
+	| program decode execute imm interpreter ast a4 |
+
+	"addi x14, x15, <iii> is #xiii78713'"
+	program := JibParser parse: (JibExamples / 'Jib' / 'riscv_quattropod.ir') asFileReference contents.
+	program sourceSearchPath add: (JibExamples / 'Sail') pathName.
+
+	decode := program lookupFunction: 'zdecode'.
+	execute := program lookupFunction: 'zexecute'.
+
+	imm := 'imm' toBitVector: 12.
+
+	interpreter := JibInterpreter for: decode arguments: { imm , (16r78713 toBitVector: 20) }.
+
+	interpreter interpret.
+
+	ast := interpreter retVal.
+	
+	self assert: (ast isDatatype).
+	self assert: (ast is: 'zITYPE').
+	
+	interpreter := JibInterpreter for: execute arguments: { ast }.
+	
+	
+	interpreter setRegister: 14 bank: 'zXs' to: (16rCAFE00000000AFFE toBitVector: 64).
+	interpreter setRegister: 15 bank: 'zXs' to: (                  0 toBitVector: 64).
+	
+	self assert: (interpreter getRegister: 15 bank: 'zXs') = (0 toBitVector: 64).
+	"
+	JibInstructionDebugger openOn: (JibDebuggerSession for: interpreter)
+	"
+	"
+	self halt.
+	"
+	interpreter interpret.
+	
+	self assert: (interpreter getRegister: 14 bank: 'zXs') = (imm signExtend: 64 - imm length).
+]
+
+{ #category : #'tests - duopod' }
+JibInterpreterTests >> test_quattropod_bge [
+	| program decode execute interpreter ast  |
+
+	"bge zero, a0, .+0x8 is #x00A05463'"
+	program := JibParser parse: (JibExamples / 'Jib' / 'riscv_quattropod.ir') asFileReference contents.
+	program sourceSearchPath add: (JibExamples / 'Sail') pathName.
+
+	decode := program lookupFunction: 'zdecode'.
+	execute := program lookupFunction: 'zexecute'.
+	
+
+	interpreter := JibInterpreter for: decode arguments: { 16r00A05463 toBitVector: 32 }.
+
+	interpreter interpret.
+
+	ast := interpreter retVal simplify.
+	
+	interpreter := JibInterpreter for: execute arguments: { ast }.
+	
+	interpreter setRegister: 10 bank: 'zXs' to: (-42 toBitVector: 64).
+	interpreter setRegister: 'zPC' to: (0 toBitVector: 64).
+	"
+	JibInstructionDebugger openOn: (JibDebuggerSession for: interpreter)
+	"
+	"
+	self halt.
+	"
+	interpreter interpret.
+	
+	self assert: (interpreter getRegister: 'zPC') = (8 toBitVector: 64).
+
+]
+
+{ #category : #'tests - duopod' }
+JibInterpreterTests >> test_quattropod_jalr [
+	| program decode execute interpreter ast  |
+
+	"jalr zero, x1, 0 is #x00008067'"
+	program := JibParser parse: (JibExamples / 'Jib' / 'riscv_quattropod.ir') asFileReference contents.
+	program sourceSearchPath add: (JibExamples / 'Sail') pathName.
+
+	decode := program lookupFunction: 'zdecode'.
+	execute := program lookupFunction: 'zexecute'.
+	
+
+	interpreter := JibInterpreter for: decode arguments: { 16r00008067 toBitVector: 32 }.
+
+	interpreter interpret.
+
+	ast := interpreter retVal simplify.
+	
+	interpreter := JibInterpreter for: execute arguments: { ast }.
+	
+	interpreter setRegister: 1 bank: 'zXs' to: (16rCAFE0000 toBitVector: 64).
+	interpreter setRegister: 'zPC'         to: (16r0000AFFE toBitVector: 64).
+	"
+	JibInstructionDebugger openOn: (JibDebuggerSession for: interpreter)
+	"
+	"
+	self halt.
+	"
+	interpreter interpret.
+	
+	self assert: (interpreter getRegister: 'zPC') = (16rCAFE0000 toBitVector: 64).
+	self assert: (interpreter getRegister: 1 bank: 'zXs') = (16rCAFE0000 toBitVector: 64).
+]
+
+{ #category : #'tests - duopod' }
+JibInterpreterTests >> test_quattropod_sub [
+	| program decode execute interpreter ast  |
+
+	"sub x5, zero, x10 is #x40A002B3'"
+	program := JibParser parse: (JibExamples / 'Jib' / 'riscv_quattropod.ir') asFileReference contents.
+	program sourceSearchPath add: (JibExamples / 'Sail') pathName.
+
+	decode := program lookupFunction: 'zdecode'.
+	execute := program lookupFunction: 'zexecute'.
+	
+
+	interpreter := JibInterpreter for: decode arguments: { 16r40A002B3 toBitVector: 32 }.
+
+	interpreter interpret.
+
+	ast := interpreter retVal simplify.
+	
+	interpreter := JibInterpreter for: execute arguments: { ast }.
+	
+	interpreter setRegister: 10 bank: 'zXs' to: (-42 toBitVector: 64).
+	"
+	JibInstructionDebugger openOn: (JibDebuggerSession for: interpreter)
+	"
+	"
+	self halt.
+	"
+	interpreter interpret.
+	
+	self assert: (interpreter getRegister: 5 bank: 'zXs') = (42 toBitVector: 64).
+
+]
+
+{ #category : #'tests - duopod' }
+JibInterpreterTests >> test_quattropod_sub_sym_regval [
+	| program decode execute interpreter ast x |
+
+	"sub x5, zero, x10 is #x40A002B3'"
+	program := JibParser parse: (JibExamples / 'Jib' / 'riscv_quattropod.ir') asFileReference contents.
+	program sourceSearchPath add: (JibExamples / 'Sail') pathName.
+
+	decode := program lookupFunction: 'zdecode'.
+	execute := program lookupFunction: 'zexecute'.
+	
+
+	interpreter := JibInterpreter for: decode arguments: { 16r40A002B3 toBitVector: 32 }.
+
+	interpreter interpret.
+
+	ast := interpreter retVal simplify.
+	
+	interpreter := JibInterpreter for: execute arguments: { ast }.
+
+	x := 'x' /// 64.
+	interpreter setRegister: 10 bank: 'zXs' to: x.
+	"
+	JibInstructionDebugger openOn: (JibDebuggerSession for: interpreter)
+	"
+	"
+	self halt.
+	"
+	interpreter interpret.
+	
+	self assert: (interpreter getRegister: 5 bank: 'zXs') = (0 - x).
+
+]
+
 { #category : #'tests - struct' }
 JibInterpreterTests >> test_struct_01 [
 	| program main interpreter |

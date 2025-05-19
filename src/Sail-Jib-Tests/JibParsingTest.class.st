@@ -24,6 +24,15 @@ JibParsingTest >> testParseDuopod [
 ]
 
 { #category : #'tests - program' }
+JibParsingTest >> testParseQuattropod [
+	| p |
+
+	p := self parseFileNamed: JibExamples / 'Jib' / 'riscv_quattropod.ir'.
+
+	self assert: (p isKindOf: JibProgram)
+]
+
+{ #category : #'tests - program' }
 JibParsingTest >> testParseReturn42 [
 	| p |
 

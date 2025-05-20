@@ -469,6 +469,26 @@ fn  zmain(_) {
 
 ]
 
+{ #category : #'tests - duopod' }
+JibInterpreterTests >> test_duopod [
+	| program decode execute interpreter maybeast ast  |
+
+	"addi a4, a5, 0 is #x00078713'"
+	program := JibParser parse: (JibExamples / 'Jib' / 'duopod.ir') asFileReference contents.
+
+	decode := program lookupFunction: 'zdecode'.
+	execute := program lookupFunction: 'zexecute'.
+
+	interpreter := JibInterpreter for: decode arguments: { 16r00078713 toBitVector: 32 }.
+
+	interpreter interpret.
+
+	maybeast := interpreter retVal.
+	ast := ((maybeast sort accessor: 1 idx: 0) value: maybeast) simplify.
+
+	self assert:(ast is: 'zITYPE').
+]
+
 { #category : #'tests - struct' }
 JibInterpreterTests >> test_struct_01 [
 	| program main interpreter |

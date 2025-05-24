@@ -25,13 +25,18 @@ BaselineOfISA >> baseline: spec [
 			spec repository: 'github://janvrany/pharo-hacks'.
 		].
 
+		spec baseline: 'GlamorousHacks' with: [
+			spec repository: 'github://janvrany/pharo-hacks'.
+		].
+
 		spec package: 'Sail-Jib' with:[
 			spec requires: 'Sail-Jib-Parsing';
 			     requires: 'Roassal3'.
 		].
 
 		spec package: 'Sail-Jib-Interpreter' with:[
-			spec requires: 'Sail-Jib'
+			spec requires: 'GlamorousHacks'.
+			spec requires: 'Sail-Jib'.
 		].
 
 		spec package: 'Sail-Jib-Interpreter-GTB' with:[

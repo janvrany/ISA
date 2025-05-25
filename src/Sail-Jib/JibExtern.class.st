@@ -30,7 +30,7 @@ JibExtern >> isExtern [
 
 { #category : #accessing }
 JibExtern >> numArgs [
-	^self signature numArgs
+	^self signature argTypes size
 ]
 
 { #category : #semantics }

@@ -14,7 +14,9 @@ Extern_sign_extend class >> signature [
 	"Return this primt's signature (as fabricated instance of `Def_Val`).
 	 This is needed for type unification."
 
-	^ Def_Val name: self id taking: { Ty_AnyBits new . Ty_I64 new } returning: Ty_AnyBits new.
+	^ Def_Val
+			constructNewFrom: { self id . { Ty_AnyBits new . Ty_I64 new } . Ty_AnyBits new }
+			accordingTo: #(id tys ty)
 
 
 

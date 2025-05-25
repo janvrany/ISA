@@ -85,7 +85,8 @@ JibDebugger >> installBindingsForDoItIn: aPresentation from: aContext [
 JibDebugger >> instructionsIn: composite forContext: context [
 	^ composite fastList
 		title: 'Instructions';
-		with: [ :text | self installActionsForRootPragmas: #( instructionDebuggingAction ) in: text ];
+		with: [ :list | self installActionsForRootPragmas: #( instructionDebuggingAction ) in: list ];
+		initialize: [ :list | list showLine: context pc ];
 		display: [ context function instrs ];
 		format: [ :insn | self formatInstruction: insn forContext: context ];
 		selectionAct: [ :list | list selection inspect ]
@@ -101,10 +102,14 @@ JibDebugger >> setDebuggerToFirstNonFilteredContext [
 { #category : #'building presentations' }
 JibDebugger >> sourceIn: composite forContext: context [
 	composite text
-			with: [ :text | self installActionsForRootPragmas: #( sourceDebuggingAction ) in: text ];
 			title: 'Source';
+			with: [ :text | self installActionsForRootPragmas: #( sourceDebuggingAction ) in: text ];
 			display: [ context sourceLoc sourceTextWithHighlights ifNil:[ 'Source not available' ] ];
-			format: #asText
+			format: #asText;
+			initialize: [ :text | text showLine: context sourceLoc sourceLine ];
+			withLineNumbers: true;
+			wrapped: false
+
 ]
 
 { #category : #'building presentations' }

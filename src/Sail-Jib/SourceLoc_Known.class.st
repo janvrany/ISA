@@ -86,7 +86,7 @@ SourceLoc_Known >> gtInspectorSourceIn: composite [
 			];
 			initialize: [ :text |
 				self source notNil ifTrue:[
-					text selectionInterval: self sourceInterval
+					(text pane port: #showLine) value: self sourceLine
 				]
 			];
 			withLineNumbers: true;
@@ -167,6 +167,11 @@ SourceLoc_Known >> sourceInterval [
 	].
 	^ 1 to: 0
 
+]
+
+{ #category : #accessing }
+SourceLoc_Known >> sourceLine [
+	^ line1
 ]
 
 { #category : #accessing }

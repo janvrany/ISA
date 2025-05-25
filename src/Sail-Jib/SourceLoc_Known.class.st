@@ -75,7 +75,22 @@ SourceLoc_Known >> gtInspectorSourceIn: composite [
 	<gtInspectorPresentationOrder: 20>
 	composite text
 			title: 'Source';
-			display: [ self sourceTextWithHighlights ];
+			display: [
+				| source |
+
+				source := self sourceTextWithHighlights.
+				source isNil ifTrue:[
+					source := 'Source not available'.
+				].
+				source.
+			];
+			initialize: [ :text |
+				self source notNil ifTrue:[
+					text selectionInterval: self sourceInterval
+				]
+			];
+			withLineNumbers: true;
+			wrapped: false;
 			format: #asText
 ]
 
@@ -129,6 +144,32 @@ SourceLoc_Known >> source [
 ]
 
 { #category : #accessing }
+SourceLoc_Known >> sourceInterval [
+	"Return interval in source string represening this location.
+	 If source string cannot be retrieved or source is truncated,
+	 return interval (1 to: 0)."
+
+	| source start end line |
+
+	source := self source.
+	source notNil ifTrue: [
+		line := 1.
+		source string lineIndicesDo: [:lineStart :lineEnd :lineEndIncludingNl |
+			line == line1 ifTrue:[
+				start := lineStart + char1.
+			].
+			line == line2 ifTrue:[
+				end := lineStart + char2 - 1.
+				^ start to: end
+			].
+			line := line + 1.
+		].
+	].
+	^ 1 to: 0
+
+]
+
+{ #category : #accessing }
 SourceLoc_Known >> sourceText [
 	| source |
 
@@ -141,25 +182,15 @@ SourceLoc_Known >> sourceText [
 
 { #category : #accessing }
 SourceLoc_Known >> sourceTextWithHighlights [
-	| source |
+	| source interval |
 
-	source := self sourceText.
+	source := self source.
 	source notNil ifTrue:[
-		| start end line |
-
-		line := 1.
-		source string lineIndicesDo: [:lineStart :lineEnd :lineEndIncludingNl |
-			line == line1 ifTrue:[
-				start := lineStart + char1.
-			].
-			line == line2 ifTrue:[
-				end := lineStart + char2 - 1.
-				source addAttribute: TextBackgroundColor yellow from: start to: end.
-				source addAttribute: TextColor black from: start to: end.
-				^ source.
-			].
-			line := line + 1.
-		].
+		source := source asText.
+		interval := self sourceInterval.
+		source addAttribute: TextBackgroundColor yellow from: interval first to: interval last.
+		source addAttribute: TextColor black from: interval first to: interval last.
+		^ source.
 	].
 	^ source.
 ]

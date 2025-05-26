@@ -37,6 +37,11 @@ Def_Union >> id [
 	^ id
 ]
 
+{ #category : #accessing }
+Def_Union >> members [
+	^ids
+]
+
 { #category : #printing }
 Def_Union >> unparseOn: aStream [
 	aStream

@@ -564,3 +564,67 @@ fn  zmain(za) {
 
 
 ]
+
+{ #category : #'tests - unions' }
+JibInterpreterTests >> test_union_01_A [
+	| program main interpreter |
+	program := JibParser parse:'
+union U {
+  A : %i,
+  B : %bv32
+}
+
+val zmain : (%i) -> %union U
+
+fn zmain(zx) {
+  zz1 : %union U      `0;
+  zz1 = A(42)         `1;
+  return = zz1        `2;
+  end;
+}
+
+register zPC : %bv64
+'.
+
+	main := program lookupFunction: 'zmain'.
+
+	interpreter := JibInterpreter for: main arguments: { 1 toInt }.
+
+	interpreter interpret.
+
+	self assert: interpreter retVal isDatatype.
+	self assert:(interpreter retVal is: 'A').
+
+]
+
+{ #category : #'tests - unions' }
+JibInterpreterTests >> test_union_01_B [
+	| program main interpreter |
+	program := JibParser parse:'
+union U {
+  A : %i,
+  B : %bv32
+}
+
+val zmain : (%i) -> %union U
+
+fn zmain(zx) {
+  zz1 : %union U      `0;
+  zz1 = B(#x0000ABCD) `1;
+  return = zz1        `2;
+  end;
+}
+
+register zPC : %bv64
+'.
+
+	main := program lookupFunction: 'zmain'.
+
+	interpreter := JibInterpreter for: main arguments: { 1 toInt }.
+
+	interpreter interpret.
+
+	self assert: interpreter retVal isDatatype.
+	self assert:(interpreter retVal is: 'B').
+
+]

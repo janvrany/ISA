@@ -176,18 +176,26 @@ JibInterpreter >> interpretBool: expr [
 
 { #category : #'interpreting - insns' }
 JibInterpreter >> interpretCall: insn [
-	| args func |
+	| args ctor func |
 
 	args := insn argExprs collect:[:expr | expr interpretIn: self ].
-	func := insn function.
 	
-	func isExtern ifTrue:[
+	ctor := insn environment lookupCtorForName: insn id numArgs: args size ifNone: [ nil ].
+	ctor notNil ifTrue:[
 		| retv |
 		
-		retv := func extern evaluateWithArguments: args.
+		retv := ctor valueWithArguments: args.
 		insn location assign: retv in: self.		
 	] ifFalse:[	
-		context := JibInterpreterContext for: insn function arguments: args caller: context.
+		func := insn function.
+		func isExtern ifTrue:[
+			| retv |
+
+			retv := func extern evaluateWithArguments: args.
+			insn location assign: retv in: self.
+		] ifFalse:[
+			context := JibInterpreterContext for: insn function arguments: args caller: context.
+		].
 	].
 
 

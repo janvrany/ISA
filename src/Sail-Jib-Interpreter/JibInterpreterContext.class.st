@@ -149,7 +149,17 @@ JibInterpreterContext >> sourceLoc [
 	 test."
 
 	(pc between: 1 and: function instrs size) ifTrue:[
-		^ (function instrs at: pc) sourceLoc
+		| instr |
+
+		instr := function instrs at: pc.
+		(instr isGoto or:[instr isEnd]) ifTrue:[
+			"goto and end instructions has no source location, never.
+			 For those, use the location of preceding instruction"
+			pc > 1 ifTrue:[
+				instr := function instrs at: pc - 1
+			]
+		].
+		^ instr sourceLoc
 	].
 	^ SourceLoc_Unknown new
 ]

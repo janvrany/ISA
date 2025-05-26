@@ -32,8 +32,18 @@ Def_Struct >> childrenDo: aBlock [
 ]
 
 { #category : #accessing }
+Def_Struct >> fields [
+	^ids
+]
+
+{ #category : #accessing }
 Def_Struct >> id [
 	^ id
+]
+
+{ #category : #testing }
+Def_Struct >> isStruct [
+	^ true
 ]
 
 { #category : #printing }

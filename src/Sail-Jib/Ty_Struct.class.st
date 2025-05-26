@@ -14,6 +14,11 @@ Ty_Struct class >> inducedParser [
 	construct: #(- id)
 ]
 
+{ #category : #accessing }
+Ty_Struct >> sort [
+	^ self environment lookupSortForTypename: id
+]
+
 { #category : #printing }
 Ty_Struct >> unparseOn: aStream [
 	aStream nextPutAll: '%struct '.

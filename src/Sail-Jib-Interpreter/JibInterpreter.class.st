@@ -191,7 +191,6 @@ JibInterpreter >> interpretCall: insn [
 	].
 
 
-
 ]
 
 { #category : #'interpreting - exprs' }
@@ -310,6 +309,18 @@ JibInterpreter >> interpretMonomorphize: insn [
 	self notYetImplemented
 
 
+]
+
+{ #category : #'interpreting - insns' }
+JibInterpreter >> interpretStruct: expr [
+	| values ctor |
+	
+	values := expr fieldExprs collect:[:fexpr | fexpr interpretIn: self].
+	
+	ctor := expr environment lookupCtorForName: expr id numArgs: values size ifNone: [ JibProgramNotWellFormedError signal: 'No such constructor, this program should have been rejected!' ].
+	
+	^ctor valueWithArguments: values.
+	
 ]
 
 { #category : #'interpreting - insns' }

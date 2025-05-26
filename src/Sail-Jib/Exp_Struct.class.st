@@ -14,6 +14,25 @@ Exp_Struct >> childrenDo: aBlock [
 	
 ]
 
+{ #category : #accessing }
+Exp_Struct >> fieldExprs [
+	"Return just the field expresions (values) as an array in order
+	 in which they appear in struct definition (which is the order of
+	 parameters for its constructor)"
+
+	| def map |
+	
+	def := self program lookupStruct: id.
+	map := Dictionary newFromAssociations: fields.
+	^def fields collect:[:nameAndType | map at: nameAndType key ].
+
+]
+
+{ #category : #accessing }
+Exp_Struct >> id [
+	^ id
+]
+
 { #category : #printing }
 Exp_Struct >> unparseOn: aStream [
 	aStream nextPutAll: 'struct '.

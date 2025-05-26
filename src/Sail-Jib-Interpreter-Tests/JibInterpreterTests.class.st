@@ -468,3 +468,99 @@ fn  zmain(_) {
 	
 
 ]
+
+{ #category : #'tests - struct' }
+JibInterpreterTests >> test_struct_01 [
+	| program main interpreter |
+	program := JibParser parse:'
+
+struct zpoint {
+	zx : %i,
+	zy : %i
+}
+
+val zmain : (%i) -> %struct zpoint
+fn  zmain(za) {
+  return = zpoint(1,2);
+  end;
+}
+
+'.
+
+	main := program lookupFunction: 'zmain'.
+
+	interpreter := JibInterpreter for: main arguments: #(1).
+
+	interpreter interpret.
+
+	self assert: interpreter retVal isDatatype.
+	self assert:(interpreter retVal is: 'zpoint').
+	self assert: interpreter retVal printString = '(zpoint 1 2)'.
+
+
+]
+
+{ #category : #'tests - struct' }
+JibInterpreterTests >> test_struct_02 [
+	| program main interpreter |
+	program := JibParser parse:'
+
+struct zpoint {
+	zx : %i,
+	zy : %i
+}
+
+val zmain : (%i) -> %struct zpoint
+fn  zmain(za) {
+	zz1 : %struct zpoint;
+	zz1.zx = 3;
+	zz1.zy = 4;
+  return = zz1;
+  end;
+}
+
+'.
+
+	main := program lookupFunction: 'zmain'.
+
+	interpreter := JibInterpreter for: main arguments: #(1).
+
+	interpreter interpret.
+
+	self assert: interpreter retVal isDatatype.
+	self assert:(interpreter retVal is: 'zpoint').
+
+
+]
+
+{ #category : #'tests - struct' }
+JibInterpreterTests >> test_struct_03 [
+	| program main interpreter |
+	program := JibParser parse:'
+
+struct zpoint {
+	zx : %i,
+	zy : %i
+}
+
+val zmain : (%i) -> %struct zpoint
+fn  zmain(za) {
+	zz1 : %struct zpoint;
+	zz1 = struct zpoint { zx = 10, zy = 20 };
+  return = zz1;
+  end;
+}
+
+'.
+
+	main := program lookupFunction: 'zmain'.
+
+	interpreter := JibInterpreter for: main arguments: #(1).
+
+	interpreter interpret.
+
+	self assert: interpreter retVal isDatatype.
+	self assert:(interpreter retVal is: 'zpoint').
+
+
+]

@@ -160,6 +160,13 @@ JibProgram >> lookupFunctionSignature: id [
 
 ]
 
+{ #category : #lookup }
+JibProgram >> lookupStruct: id [
+	self structsDo: [ :struct | struct id = id ifTrue:[ ^struct ] ].
+	self error:'No ''struct'' named ''' , id , ''''.
+
+]
+
 { #category : #accessing }
 JibProgram >> program [
 	^ self
@@ -198,6 +205,12 @@ JibProgram >> sourceSearchPath [
 { #category : #accessing }
 JibProgram >> sourceSubstitutePath [
 	^ sourceSubstitutePath
+]
+
+{ #category : #enumerating }
+JibProgram >> structsDo: aBlock [
+	defs do: [ :def | def isStruct ifTrue:[ aBlock value: def ] ]
+
 ]
 
 { #category : #printing }

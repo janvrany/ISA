@@ -5,7 +5,8 @@ Class {
 		'jib',
 		'compilation',
 		'decode_and_execute',
-		'debugging'
+		'debugging',
+		'shell'
 	],
 	#pools : [
 		'TRDataTypes'
@@ -106,6 +107,45 @@ MoreVMs25 >> example_03_addi_symbolic_d [
 	     equals: (x15 + (imm signExtendTo: 64)).
 ]
 
+{ #category : #examples }
+MoreVMs25 >> example_04_abs [
+	| b abs r |
+	
+	self setUpTinyrossa.	
+	"
+	int64_t abs ( int64_t x) {
+		if (x > 0) {
+			return x;
+		} else { 
+			return 0 - x;
+		}
+	}
+	"
+	b := compilation builder.
+	b defineName: 'abs' type: Int64.
+	b defineParameter: 'x' type: Int64.	
+	b
+		if: (b lcmpgt: { b lload: 'x' . b lconst: 0  }) then: [ :b |
+				b lreturn:
+					{ b lload: 'x' } 
+		] else:[ :b |
+				b lreturn: {
+					b lsub:
+						{ b lconst: 0 .
+						  b lload: 'x' } } 
+		].
+
+	compilation optimize.
+	compilation compile.
+	abs := compilation functionSymbol. 
+	
+	
+	shell inject: compilation.
+	r := shell debug: abs with: #( -42 ) types: { Int64 }.
+	
+
+]
+
 { #category : #initialization }
 MoreVMs25 >> initialize [
 	debugging := false.
@@ -121,4 +161,23 @@ MoreVMs25 >> setUp [
 	jib sourceSearchPath add: (JibExamples / 'Sail') pathName.
 
 	decode_and_execute := jib lookupFunction: 'decode_and_execute' zencode.
+]
+
+{ #category : #running }
+MoreVMs25 >> setUpTinyrossa [
+	AcProcessorDescriptions reset.
+	compilation := TRCompilation forConfig: TRCompilationConfig forRV64GLinux.
+	compilation config optimizationPasses: (compilation config optimizationPasses , { TRGRA }).
+	shell := TRCompilationTestShell forTarget: compilation target.
+	
+
+]
+
+{ #category : #running }
+MoreVMs25 >> tearDown [
+	super tearDown.
+	shell notNil ifTrue: [ 
+		shell tearDown.
+		shell := nil.
+	].
 ]

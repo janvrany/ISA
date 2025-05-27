@@ -28,6 +28,10 @@ BaselineOfISA >> baseline: spec [
 		spec baseline: 'GlamorousHacks' with: [
 			spec repository: 'github://janvrany/pharo-hacks'.
 		].
+	
+		spec baseline: 'Tinyrossa' with: [
+				spec repository: 'github://janvrany/Tinyrossa:MoreVMs25'.
+		].
 
 		spec package: 'Sail-Jib' with:[
 			spec requires: 'Sail-Jib-Parsing';
@@ -56,13 +60,14 @@ BaselineOfISA >> baseline: spec [
 			spec requires: 'Sail-Jib-Parsing';
 			     requires: 'Sail-Jib'.
 		].
-
+	
 		spec package: 'Sail-Jib-Demos' with:[
 			spec requires: 'Sail-Jib';
 			     requires: 'Sail-Jib-Interpreter';
-			     requires: 'Sail-Jib-Interpreter-GTB'
+			     requires: 'Sail-Jib-Interpreter-GTB';
+			     requires: 'Tinyrossa'
 		].
-
+	
 
  ]
 ]

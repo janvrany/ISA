@@ -38,6 +38,32 @@ LIBGDBS_BRANCH ?= default
 $(eval $(call mercurial-clone-local,LIBGDBS_DIR,$(LIBGDBS_URL),$(LIBGDBS_BRANCH)))
 endif
 
+ifndef ARCHC_DIR
+ARCHC_DIR    := ../../3rdparty/ArchC
+ARCHC_URL    ?= https://github.com/shingarov/Pharo-ArchC
+ARCHC_BRANCH ?= pure-z3
+$(eval $(call git-clone-local,ARCHC_DIR,$(ARCHC_URL),$(ARCHC_BRANCH)))
+endif
+
+ifndef ARCHC_PDL_DIR
+ARCHC_PDL_DIR    := ../../3rdparty/ArchC/pdl
+ARCHC_PDL_URL    ?= https://github.com/janvrany/Pharo-ArchC-PDL.git
+ARCHC_PDL_BRANCH ?= master
+$(eval $(call git-clone-local,ARCHC_PDL_DIR,$(ARCHC_PDL_URL),$(ARCHC_PDL_BRANCH)))
+endif
+
+ifndef TINYROSSA_DIR
+TINYROSSA_DIR  = ../../3rdparty/Tinyrossa
+TINYROSSA_URL ?= https://github.com/janvrany/Tinyrossa.git
+#TINYROSSA_BRANCH ?= master
+#
+# temporarily use custom branch
+#
+TINYROSSA_BRANCH ?= MoreVMs25
+$(eval $(call git-clone-local,TINYROSSA_DIR,$(TINYROSSA_URL),$(TINYROSSA_BRANCH)))
+endif
+
+
 build: prereq $(PROJECT).image
 	@echo ""
 	@echo "To open Pharo $(PROJECT) image run:"
@@ -57,6 +83,8 @@ $(PROJECT).image: ../src/*/*.st
 	$(call pharo-load-local, $@, GlamorousHacks,   $(PHARO_HACKS_DIR)/src)
 	$(call pharo-load-local, $@, PTerm,            $(PTERM_DIR))
 	$(call pharo-load-local, $@, LibGDBs,          $(LIBGDBS_DIR)/ports/pharo/src-generated)
+	$(call pharo-load-local, $@, ArchC,            $(ARCHC_DIR)/src)
+	$(call pharo-load-local, $@, Tinyrossa,        $(TINYROSSA_DIR)/src)
 	$(call pharo-load-local, $@, ISA,            ../src)
 
 run: build

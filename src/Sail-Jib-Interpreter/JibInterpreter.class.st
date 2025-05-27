@@ -72,11 +72,12 @@ JibInterpreter >> getRegister: id [
 JibInterpreter >> getRegister: index bank: id [
 	| bank | 
 	
+	self assert: index isInteger.
 	self assert: (globals includesKey: id).
 	self assert:((globals at: id) isKindOf: McCarthyArray).
 	
 	bank := globals at: id.	
-	^bank arraySelect: (bank ctx mkIntSort cast: index).
+	^bank arraySelect: (bank ctx mkInt: index).
 ]
 
 { #category : #initialization }
@@ -473,19 +474,31 @@ JibInterpreter >> set: id to: value [
 
 { #category : #'accessing - globals' }
 JibInterpreter >> setRegister: index bank: id to: value [
-	| bank |
+	| bank valueToStore |
 	
+	self assert: index isInteger.
 	self assert:(globals includesKey: id).
 	self assert:((globals at: id) isKindOf: McCarthyArray).
 	
 	bank := globals at: id.
-	bank := bank arrayStore: (bank ctx mkIntSort cast: index) put: value.
+
+	Z3ContextQuery answer: bank ctx do: [
+		valueToStore := bank sort range cast: value
+	].
+	bank := bank arrayStore: (bank ctx mkInt: index) put: valueToStore.
 	globals at: id put: bank
 ]
 
 { #category : #'accessing - globals' }
 JibInterpreter >> setRegister: id to: value [
+	| valueToStore |
+
 	self assert:(globals includesKey: id).
+
+	Z3ContextQuery answer: (globals at: id) ctx do: [
+		valueToStore := (globals at: id) sort cast: value
+	].
+
 
 	globals at: id put: value
 ]

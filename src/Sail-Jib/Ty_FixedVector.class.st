@@ -38,7 +38,7 @@ Ty_FixedVector >> newZero [
 	zero := ty newZero.
 	^ (0 to: length - 1)
 			inject: (self sort mkFreshConst: 'undefined')
-			into: [ :array :index | array arrayStore: index toInt put: zero ]
+			into: [ :array :index | array arrayStore: (self sort ctx mkInt: index) put: zero ]
 
 ]
 

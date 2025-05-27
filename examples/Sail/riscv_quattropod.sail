@@ -279,7 +279,7 @@ function clause execute (BTYPE(imm, rs2, rs1, op)) = {
    * (memory unmapped or not executable and so on)
    */
   if taken then {
-    PC = target
+    nextPC = target
   };
   RETIRE_SUCCESS
 }
@@ -329,7 +329,7 @@ function clause execute (RISCV_JALR(imm, rs1, rd)) = {
    * For simplicity, we omit target address validation
    * (memory unmapped or not executable and so on)
    */
-  PC = target;
+  nextPC = target;
   RETIRE_SUCCESS
 }
 
@@ -346,5 +346,9 @@ function clause execute _ = RETIRE_FAIL
 val decode_and_execute : bits(32) -> retire_status
 
 function decode_and_execute(enc) = {
-  execute(decode(enc));
+  let ast = decode(enc);
+  nextPC = PC + 0x0000_0000_0000_0004;
+  let status = execute(ast);
+  PC = nextPC;
+  status
 }

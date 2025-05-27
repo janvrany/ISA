@@ -35,9 +35,15 @@ JibDebugger class >> spanNewSessionForContext: aContext fromProcess: aProcess [
 
 { #category : #accessing }
 JibDebugger class >> spanNewSessionFrom: anotherSession [
-	self assert: anotherSession class == self sessionClass.
+	(anotherSession isKindOf: self sessionClass) ifTrue:[
+		^ anotherSession copy.
+	].
+
+	(anotherSession isKindOf: GTBDebuggerSession) ifTrue:[
+		^ GTBJibDebuggerSession forDebugger: anotherSession debugger
+	].
 	
-	^anotherSession copy
+	^ self error: 'Unssuported session type!'
 ]
 
 { #category : #private }
@@ -130,4 +136,28 @@ JibDebugger >> transmitFromStackToCodeIn: browser [
 		from: #stack port: #selection;
 		to: #code;
 		andShow: [ :composite :context | context notNil ifTrue:[ self codeIn: composite forContext: context ]].
+]
+
+{ #category : #updating }
+JibDebugger >> updateBrowser [
+	| browserPane session |
+
+	session := self session.
+	((session interruptedContext isNil) and:[session gdb notNil]) ifTrue: [
+		"Following code is copy-paste-n-hacked version of #debug:using:"
+
+		| newSession newDebugger |
+
+		session terminate.
+		self detachSession.
+		self browser close.
+		"session updateContextTo: aContext."
+		newSession := GTBDebugger sessionClass on: session gdb.
+		newDebugger := GTBNativeDebugger on: newSession.
+		^ self openAndInitialize: newDebugger
+	] ifFalse: [
+		browserPane := self browser pane.
+		(browserPane port: #entity) silentValue: nil.
+		(browserPane port: #entity) value: session.
+	]
 ]

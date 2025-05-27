@@ -15,7 +15,6 @@ JibDebugActionChangeDebugger class >> actionsFor: debugger [
 	| availableDebuggerClasses |
 
 	availableDebuggerClasses := JibDebugger allSubclasses reject:[:e| e isAbstract or: [e = debugger class ]].
-	availableDebuggerClasses := availableDebuggerClasses reject:[:e|e name = #JibFromGTBDebugger].
 	^availableDebuggerClasses collect: [:debuggerClass | self forDebugger: debugger class: debuggerClass ].
 ]
 

@@ -132,6 +132,12 @@ JibDebuggerSession >> finish: context [
 
 ]
 
+{ #category : #accessing }
+JibDebuggerSession >> gdb [
+	"This is really a hack, see JibDebugger >> updateBrowser"
+	^nil
+]
+
 { #category : #initialization }
 JibDebuggerSession >> initializeWithInterpreter: aJibInterpreter [
 	self assert: (aJibInterpreter isKindOf: JibInterpreter).

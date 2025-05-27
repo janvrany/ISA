@@ -57,5 +57,12 @@ BaselineOfISA >> baseline: spec [
 			     requires: 'Sail-Jib'.
 		].
 
+		spec package: 'Sail-Jib-Demos' with:[
+			spec requires: 'Sail-Jib';
+			     requires: 'Sail-Jib-Interpreter';
+			     requires: 'Sail-Jib-Interpreter-GTB'
+		].
+
+
  ]
 ]

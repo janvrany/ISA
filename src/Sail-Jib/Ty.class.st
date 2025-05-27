@@ -38,6 +38,11 @@ Ty >> childrenDo: aBlock [
 	
 ]
 
+{ #category : #testing }
+Ty >> isFixedVector [
+	^ false
+]
+
 { #category : #'as yet unclassified' }
 Ty >> newUndefined [
 	^ self sort mkFreshConst: 'undefined'

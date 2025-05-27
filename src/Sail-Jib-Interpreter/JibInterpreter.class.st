@@ -80,6 +80,40 @@ JibInterpreter >> getRegister: index bank: id [
 	^bank arraySelect: (bank ctx mkInt: index).
 ]
 
+{ #category : #inspecting }
+JibInterpreter >> gtDebuggerPresentationsIn: composite inContext: ignored [
+	self gtRegistersIn: composite.
+	context notNil ifTrue:[
+		context gtLocalsIn: composite 
+	] 
+]
+
+{ #category : #inspecting }
+JibInterpreter >> gtRegistersIn: composite [
+	<gtInspectorPresentationOrder: 40>
+	
+	| registers |
+	
+	registers := OrderedCollection new.
+	program registersDo:[:reg |
+		reg regType isFixedVector ifTrue:[
+			0 to: reg regType length -1 do:[:i | 
+				registers add: (reg id , i printString) -> (self getRegister: i bank: reg id) simplify
+			]			
+		] ifFalse:[
+			registers add: (reg id) -> (self getRegister: reg id) simplify
+		]
+	].
+	
+	^ composite fastTable
+		title: 'Registers';
+		display: [ registers ];
+		column: 'Name' evaluated: [ :nameAndValue | nameAndValue key ];
+		column: 'Value' evaluated: [ :nameAndValue | nameAndValue value ];
+		send: [ :selection | selection value ]
+		yourself.
+]
+
 { #category : #initialization }
 JibInterpreter >> initializeWithFunction: fn arguments: args [
 	entry := fn.

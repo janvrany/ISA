@@ -61,11 +61,6 @@ JibInterpreterContext >> getRetVal [
 ]
 
 { #category : #inspecting }
-JibInterpreterContext >> gtConstructDebuggerInspectorIn: composite for: debugger [
-	^ self gtLocalsIn: composite
-]
-
-{ #category : #inspecting }
 JibInterpreterContext >> gtLocalsIn: composite [
 	<gtInspectorPresentationOrder: 40>
 
@@ -73,7 +68,8 @@ JibInterpreterContext >> gtLocalsIn: composite [
 		title: 'Locals';
 		display: [ :ctx | values associations ];
 		column: 'Name' evaluated: [ :nameAndValue | nameAndValue key ];
-		column: 'Value' evaluated: [ :nameAndValue | nameAndValue value ];
+		column: 'Value' evaluated: [ :nameAndValue | nameAndValue value simplify ];
+		send: [ :selection | selection value ];
 		yourself.
 
 

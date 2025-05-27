@@ -81,6 +81,12 @@ JibDebugger >> formatStackForContext: context [
 ]
 
 { #category : #'building presentations' }
+JibDebugger >> inspectorIn: composite on: context [
+	^ self session interpreter 
+		gtConstructDebuggerInspectorIn: composite for: self
+]
+
+{ #category : #'building presentations' }
 JibDebugger >> installBindingsForDoItIn: aPresentation from: aContext [
 	"TODO"
 

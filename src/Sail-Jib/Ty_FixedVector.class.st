@@ -26,6 +26,16 @@ Ty_FixedVector >> childrenDo: aBlock [
 	
 ]
 
+{ #category : #testing }
+Ty_FixedVector >> isFixedVector [
+	^ true
+]
+
+{ #category : #accessing }
+Ty_FixedVector >> length [
+	^ length
+]
+
 { #category : #'as yet unclassified' }
 Ty_FixedVector >> newUndefined [
 	^ self newZero

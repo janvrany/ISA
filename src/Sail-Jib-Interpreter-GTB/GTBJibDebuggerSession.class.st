@@ -47,7 +47,7 @@ GTBJibDebuggerSession >> copyRegistersFromDebuggerToInterpreter [
 
 { #category : #private }
 GTBJibDebuggerSession >> copyRegistersFromInterpreterToDebugger [
-	| frame |
+	| frame pc |
 
 	frame := gdb selectedThread stack first.
 
@@ -63,7 +63,14 @@ GTBJibDebuggerSession >> copyRegistersFromInterpreterToDebugger [
 		value := value unsignedValue.
 
 		frame setRegister: gdbName to: value.
-	]
+	].
+
+	"We have changed PC so force-set the frame PC tp
+	 the new values. Saves us a round-trip to GDB (and
+	 potential deadlock :-("
+	pc := interpreter getRegister: 'zPC'.
+	pc := pc unsignedValue.
+	frame setAddr: pc.
 
 ]
 

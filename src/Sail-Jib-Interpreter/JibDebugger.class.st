@@ -149,18 +149,25 @@ JibDebugger >> updateBrowser [
 	| browserPane session |
 
 	session := self session.
-	((session interruptedContext isNil) and:[session gdb notNil]) ifTrue: [
-		"Following code is copy-paste-n-hacked version of #debug:using:"
+	(session interruptedContext isNil) ifTrue: [
+		session gdb notNil ifTrue:[
+			"This session was created from GDB session, return back
+			 to GDB.
 
-		| newSession newDebugger |
+			 Following code is copy-paste-n-hacked version of #debug:using:
+			"
+			| newSession newDebugger |
 
-		session terminate.
-		self detachSession.
-		self browser close.
-		"session updateContextTo: aContext."
-		newSession := GTBDebugger sessionClass on: session gdb.
-		newDebugger := GTBNativeDebugger on: newSession.
-		^ self openAndInitialize: newDebugger
+			session terminate.
+			self detachSession.
+			self browser close.
+			"session updateContextTo: aContext."
+			newSession := GTBDebugger sessionClass on: session gdb.
+			newDebugger := GTBNativeDebugger on: newSession.
+			self openAndInitialize: newDebugger.
+		] ifFalse:[
+			self close.
+		]
 	] ifFalse: [
 		browserPane := self browser pane.
 		(browserPane port: #entity) silentValue: nil.

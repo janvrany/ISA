@@ -5,7 +5,8 @@ Class {
 		'values',
 		'function',
 		'caller',
-		'pc'
+		'pc',
+		'loc'
 	],
 	#category : #'Sail-Jib-Interpreter-Interpreter'
 }
@@ -83,6 +84,7 @@ JibInterpreterContext >> initializeWith: code arguments: args caller: callr [
 	function := code.
 	caller := callr.
 	pc := 1.
+	loc := (function instrs at: 1) sourceLoc.
 
 	function isFn ifTrue:[
 		"Initialize arguments and return value. We do this only
@@ -110,13 +112,37 @@ JibInterpreterContext >> pc [
 
 { #category : #accessing }
 JibInterpreterContext >> pc: anInteger [
-	"Set the current PC (index into instrs sequence) in this context.
-	 Here we allow to set the PC one beyond the size of an instruction
+	"Set the current PC (index into instrs sequence) in this context."
+
+	"Here we allow to set the PC one beyond the size of an instruction
 	 sequence - this is to signal end of initializer execution. See
 	 JibInterpreter >> interpret1."
 	self assert: (pc between: 1 and: function instrs size + 1).
 
-	pc := anInteger
+	pc := anInteger.
+
+	"Update the source location:"
+	pc = (function instrs size + 1) ifTrue:[
+		"If this is an initializer and finished execution, set
+		 the location to unknown."
+		loc := SourceLoc_Unknown new.
+	] ifFalse:[
+		"Otherwise set it to instruction's location unless it is
+		 a `goto` or `end` who have no locations. So for those,
+		 the location remains the location if previously executed
+		 instruction. This avoids 'flickering' in debugger and also
+		 deals with 'jump islands' in Jib code (jumps to cluster of
+		 other jumps)."
+		| instr |
+
+		instr := function instrs at: pc.
+		(instr isGoto not and:[instr isEnd not]) ifTrue:[
+			loc := instr sourceLoc
+		]
+	]
+
+
+
 ]
 
 { #category : #printing }
@@ -138,24 +164,11 @@ JibInterpreterContext >> set: id to: value [
 
 { #category : #accessing }
 JibInterpreterContext >> sourceLoc [
-	"Return a source location for instruction currently being executed."
+	"Return a source location for instruction currently being executed.
 	
-	"Note that pc can be set to one beyond the size of an instruction
-	 sequence (see JibInterpreter >> interpret1 for reason). Hence the
-	 test."
+	 Note that this may not be always the location of instruction at
+	 current pc, for details, see `#pc:`.
+	 "
 
-	(pc between: 1 and: function instrs size) ifTrue:[
-		| instr |
-
-		instr := function instrs at: pc.
-		(instr isGoto or:[instr isEnd]) ifTrue:[
-			"goto and end instructions has no source location, never.
-			 For those, use the location of preceding instruction"
-			pc > 1 ifTrue:[
-				instr := function instrs at: pc - 1
-			]
-		].
-		^ instr sourceLoc
-	].
-	^ SourceLoc_Unknown new
+	^ loc
 ]
